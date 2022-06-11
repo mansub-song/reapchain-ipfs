@@ -9,9 +9,8 @@ import (
 	"google.golang.org/grpc"
 )
 
-
+const port =50051
 var (
-	port =50051
 	tx TxInfo
 )
 
@@ -24,7 +23,7 @@ type TxInfo struct {
 	Nonce uint32
 }
 
-// server is used to implement helloworld.GreeterServer.
+// server is used to implement reapGRPC.GreeterServer.
 type server struct {
 	UnimplementedGreeterServer
 }
