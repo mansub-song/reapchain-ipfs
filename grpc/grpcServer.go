@@ -2,8 +2,8 @@ package grpc
 
 import (
 	"context"
-	"flag"
 	"fmt"
+	"log"
 	"net"
 
 	"google.golang.org/grpc"
@@ -29,16 +29,21 @@ type server struct {
 	UnimplementedGreeterServer
 }
 
-// SayHello implements helloworld.GreeterServer
-func (s *server) SayHello(ctx context.Context, in *HelloRequest) (*HelloReply, error) {
-	fmt.Printf("Received: %v", in.GetName())
-	return &HelloReply{Message: "Hello " + in.GetName()}, nil
-}
-// func (s *server) SayHelloAgain(ctx context.Context, in *HelloRequest) (*HelloReply, error) {
-//         return &HelloReply{Message: "Hello again " + in.GetName()}, nil
-// }
+// Get preferred outbound ip of this machine
+func getOutboundIP() net.IP {
+    conn, err := net.Dial("udp", "8.8.8.8:80")
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer conn.Close()
 
-func (s *server) SayTransactionInfo(ctx context.Context, in *TransactionInfo) (*HelloReply, error) {
+    localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+    return localAddr.IP
+}
+
+
+func (s *server) SayTransactionInfo(ctx context.Context, in *TransactionRequest) (*TransactionReply, error) {
 		tx := &TxInfo {
 			BlockHash: in.GetBlockHash(),
 			BlockNumber: in.GetBlockNumber(),
@@ -51,13 +56,12 @@ func (s *server) SayTransactionInfo(ctx context.Context, in *TransactionInfo) (*
 		// fmt.Printf("Received: %v", in)
 		fmt.Printf("txInfo: %+v",*tx)
 		fmt.Println(tx.BlockHash)
-        return &HelloReply{Message: "Hello again " + in.GetBlockHash() + "  " + in.GetFromAddress()}, nil
+        return &TransactionReply{Message: "Hello again " + in.GetBlockHash() + "  " + in.GetFromAddress()}, nil
 }
 
 func ServerInit() {
-	flag.Parse()
-	// lis, err := net.Listen("tcp", fmt.Sprintf("147.46.240.229:%d", port))
-	lis, err := net.Listen("tcp", fmt.Sprintf("147.46.240.229:%d", port))
+	localIP := getOutboundIP().String()
+	lis, err := net.Listen("tcp", fmt.Sprintf(localIP+":%d", port))
 	if err != nil {
 		fmt.Printf("failed to listen: %v", err)
 	}

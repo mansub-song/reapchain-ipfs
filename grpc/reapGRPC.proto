@@ -14,29 +14,22 @@
 
 syntax = "proto3";
 
-option go_package = "github.com/mansub1029/reapchain-ipfs/grpc";
+option go_package = "github.com/reappay/reapchain-ipfs/grpc";
 
 
 package grpc;
 
 // The greeting service definition.
 service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
-  rpc SayTransactionInfo (TransactionInfo) returns (HelloReply) {}
-}
-
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+  rpc SayTransactionInfo (TransactionRequest) returns (TransactionReply) {}
 }
 
 // The response message containing the greetings
-message HelloReply {
+message TransactionReply {
   string message = 1;
 }
 
-message TransactionInfo {
+message TransactionRequest {
   string blockHash =1;
   uint32 blockNumber =2;
   string txHash =3;

@@ -1,4 +1,4 @@
-module github.com/mansub1029/reapchain-ipfs-grpc
+module github.com/reappay/reapchain-ipfs-grpc
 
 go 1.16
 
