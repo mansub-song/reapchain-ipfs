@@ -22,6 +22,7 @@ package grpc;
 // The greeting service definition.
 service Greeter {
   rpc SayTransactionInfo (TransactionRequest) returns (TransactionReply) {}
+  rpc GetTransactionInfo (Cid) returns (CidReply) {} 
 }
 
 // The response message containing the greetings
@@ -29,11 +30,25 @@ message TransactionReply {
   string message = 1;
 }
 
-message TransactionRequest {
+// The response message containing the greetings
+message CidReply {
   string blockHash =1;
   uint32 blockNumber =2;
   string txHash =3;
   string fromAddress = 4;
   string toAddress = 5;
   uint32 nonce=6;
+}
+
+message TransactionRequest { //TransactionRequest
+  string blockHash =1;
+  uint32 blockNumber =2;
+  string txHash =3;
+  string fromAddress = 4;
+  string toAddress = 5;
+  uint32 nonce=6;
+}
+
+message Cid {
+  string cid = 1;
 }

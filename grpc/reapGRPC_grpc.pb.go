@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GreeterClient interface {
 	SayTransactionInfo(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionReply, error)
+	GetTransactionInfo(ctx context.Context, in *Cid, opts ...grpc.CallOption) (*CidReply, error)
 }
 
 type greeterClient struct {
@@ -42,11 +43,21 @@ func (c *greeterClient) SayTransactionInfo(ctx context.Context, in *TransactionR
 	return out, nil
 }
 
+func (c *greeterClient) GetTransactionInfo(ctx context.Context, in *Cid, opts ...grpc.CallOption) (*CidReply, error) {
+	out := new(CidReply)
+	err := c.cc.Invoke(ctx, "/grpc.Greeter/GetTransactionInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServer is the server API for Greeter service.
 // All implementations must embed UnimplementedGreeterServer
 // for forward compatibility
 type GreeterServer interface {
 	SayTransactionInfo(context.Context, *TransactionRequest) (*TransactionReply, error)
+	GetTransactionInfo(context.Context, *Cid) (*CidReply, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedGreeterServer struct {
 
 func (UnimplementedGreeterServer) SayTransactionInfo(context.Context, *TransactionRequest) (*TransactionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayTransactionInfo not implemented")
+}
+func (UnimplementedGreeterServer) GetTransactionInfo(context.Context, *Cid) (*CidReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionInfo not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 
@@ -88,6 +102,24 @@ func _Greeter_SayTransactionInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Greeter_GetTransactionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Cid)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).GetTransactionInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.Greeter/GetTransactionInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).GetTransactionInfo(ctx, req.(*Cid))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var Greeter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SayTransactionInfo",
 			Handler:    _Greeter_SayTransactionInfo_Handler,
+		},
+		{
+			MethodName: "GetTransactionInfo",
+			Handler:    _Greeter_GetTransactionInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

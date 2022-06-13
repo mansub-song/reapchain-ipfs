@@ -63,7 +63,32 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	r, err := c.SayTransactionInfo(ctx, &pb.TransactionRequest{
+	testSayTransactionInfo(ctx,c)
+	
+	testGetTransactionInfo(ctx,c)
+
+
+}
+func testGetTransactionInfo(ctx context.Context, client pb.GreeterClient) {
+	r, err := client.GetTransactionInfo(ctx, &pb.Cid{
+			Cid: "QmfJs6XRpf34TEK5TbTLFBDbeAbjgpYHHNdKJSrngkKfb7",
+		})
+	if err != nil {
+		log.Fatalf("could not GetTransactionInfo: %v", err)
+	}
+	log.Printf("GetTransactionInfo reply: %s %d %s %s %s %d", 
+	r.GetBlockHash(), 
+	r.GetBlockNumber(),
+	r.GetTxHash(),
+	r.GetFromAddress(),
+	r.GetToAddress(),
+	r.GetNonce())
+}
+
+
+
+func testSayTransactionInfo(ctx context.Context, client pb.GreeterClient) {
+	r, err := client.SayTransactionInfo(ctx, &pb.TransactionRequest{
 			BlockHash: "0x9bb5a652cbbdb8f8b7e1cbbdb21264d7fa93983aada84d66272ab45233e740cf",
 			BlockNumber: 91541744,
 			TxHash: "0xec166965eb8b5374f9ad52d1fa541de5e318d825242ed024d4a79d1b73e9fd59",
@@ -72,11 +97,7 @@ func main() {
 			Nonce: 486,
 		})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatalf("could not SayTransactionInfo: %v", err)
 	}
-	log.Printf("Greeting: %s", r.GetMessage())
-
-
-
-
+	log.Printf("SayTransactionInfo reply: %s", r.GetMessage())
 }
