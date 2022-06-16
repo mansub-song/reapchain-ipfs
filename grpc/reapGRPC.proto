@@ -14,7 +14,7 @@
 
 syntax = "proto3";
 
-option go_package = "github.com/reappay/reapchain-ipfs/grpc";
+option go_package = "github.com/mansub1029/reapchain-ipfs/grpc";
 
 
 package grpc;
