@@ -86,7 +86,7 @@ func ServerInit() {
 	}
 	s := grpc.NewServer()
 	RegisterGreeterServer(s, &server{})
-	fmt.Printf("server listening at %v", lis.Addr())
+	fmt.Printf("grpc server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		fmt.Printf("failed to serve: %v", err)
 	}
