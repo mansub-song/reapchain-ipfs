@@ -27,7 +27,7 @@ type ctr struct {
 }
 
 const streamBufferSize = 512
-const EncryptionRatio = 16
+const EncryptionRatio = 8
 
 // ctrAble is an interface implemented by ciphers that have a specific optimized
 // implementation of CTR, like crypto/aes. NewCTR will check for this interface
