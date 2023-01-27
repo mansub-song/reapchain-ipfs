@@ -2,10 +2,12 @@ package grpc
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
 
+	"github.com/syndtr/goleveldb/leveldb"
 	"google.golang.org/grpc"
 )
 
@@ -30,7 +32,7 @@ type server struct {
 }
 
 // Get preferred outbound ip of this machine
-func getOutboundIP() net.IP {
+func GetLocalIP() net.IP {
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
 		log.Fatal(err)
@@ -42,6 +44,18 @@ func getOutboundIP() net.IP {
 	return localAddr.IP
 }
 
+func addTransactionInfo(key []byte, value []byte) []byte {
+	db, err := leveldb.OpenFile("/tmp/foo.db", nil)
+	if err != nil {
+		log.Fatal("Failed leveldb open!")
+	}
+	err = db.Put(key, value, nil)
+	newValue, err := db.Get(key, nil)
+	defer db.Close()
+	return newValue
+}
+
+//client 코드의 testSayTransactionInfo() 함수에 대한 reply 해주는 함수
 func (s *server) SayTransactionInfo(ctx context.Context, in *TransactionRequest) (*TransactionReply, error) {
 	tx := &TxInfo{
 		BlockHash:   in.GetBlockHash(),
@@ -54,9 +68,24 @@ func (s *server) SayTransactionInfo(ctx context.Context, in *TransactionRequest)
 	// fmt.Printf("Received: %v", in)
 	fmt.Printf("txInfo: %+v", *tx)
 	fmt.Println(tx.BlockHash)
+
+	blockchainName := "ETH"
+	key := []byte(blockchainName + in.GetTxHash())
+	value, err := json.Marshal(tx)
+	fmt.Println("value:", value)
+	if err != nil {
+		log.Fatal("Failed marshaling!")
+	}
+	newValue := addTransactionInfo(key, value)
+	var newTx *TxInfo
+	err = json.Unmarshal(newValue, newTx)
+	fmt.Println("newValue:", newValue)
+	// fmt.Printf("newTx: %+v", *newTx)
+
 	return &TransactionReply{Message: in.GetBlockHash() + "  " + in.GetFromAddress()}, nil
 }
 
+//client 코드에서 testGetTransactionInfo() 함수에 대한 reply를 해주는 함수
 func (s *server) GetTransactionInfo(ctx context.Context, in *Cid) (*CidReply, error) {
 	cid := in.GetCid()
 	fmt.Println("GetTransactionInfo cid:", cid)
@@ -79,7 +108,7 @@ func (s *server) GetTransactionInfo(ctx context.Context, in *Cid) (*CidReply, er
 }
 
 func ServerInit() {
-	localIP := getOutboundIP().String()
+	localIP := GetLocalIP().String()
 	lis, err := net.Listen("tcp", fmt.Sprintf(localIP+":%d", port))
 	if err != nil {
 		fmt.Printf("failed to listen: %v", err)
