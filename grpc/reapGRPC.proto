@@ -22,7 +22,7 @@ package grpc;
 // The greeting service definition.
 service Greeter {
   rpc SayTransactionInfo (TransactionRequest) returns (TransactionReply) {}
-  rpc GetTransactionInfo (Cid) returns (CidReply) {} 
+  rpc GetTransactionInfo (MetadataKey) returns (MetadataValue) {} 
 }
 
 // The response message containing the greetings
@@ -30,15 +30,7 @@ message TransactionReply {
   string message = 1;
 }
 
-// The response message containing the greetings
-message CidReply {
-  string blockHash =1;
-  uint32 blockNumber =2;
-  string txHash =3;
-  string fromAddress = 4;
-  string toAddress = 5;
-  uint32 nonce=6;
-}
+
 
 message TransactionRequest { //TransactionRequest
   string blockHash =1;
@@ -47,8 +39,23 @@ message TransactionRequest { //TransactionRequest
   string fromAddress = 4;
   string toAddress = 5;
   uint32 nonce=6;
+  string cid=7;
+  string blockchainName=8;
 }
 
-message Cid {
+message MetadataKey {
   string cid = 1;
+  string blockchainName = 2;
+}
+
+// The response message containing the greetings
+message MetadataValue {
+  string blockHash =1;
+  uint32 blockNumber =2;
+  string txHash =3;
+  string fromAddress = 4;
+  string toAddress = 5;
+  uint32 nonce=6;
+  string cid=7;
+  string blockchainName=8;
 }

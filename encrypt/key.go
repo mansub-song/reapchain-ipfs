@@ -1,19 +1,11 @@
 package encrypt
 
-var key []byte
+var encryptOpt string
 
-func SetKey(keyByte []byte) {
-	key = keyByte
+func SetEncryptOpt(opt string) {
+	encryptOpt = opt
 }
 
-func GetKey() []byte {
-	return key
+func GetEncryptOpt() string {
+	return encryptOpt
 }
-
-// func SetNonce(nonceByte []byte) {
-// 	nonce = nonceByte
-// }
-
-// func GetNonce() []byte {
-// 	return nonce
-// }

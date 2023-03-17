@@ -38,8 +38,11 @@ func StreamToByte(stream io.Reader) []byte {
 }
 
 func ChunkOption(opt string) ([]byte, []byte, []byte, []byte) {
+	// fmt.Println("opt:", opt)
 	tempStrings := strings.Split(opt, "-")
-	encryptionKey, _ := hex.DecodeString(tempStrings[0]) // hex를 표현하는 string을 hex값으로 변환
+	// fmt.Println("tempStrings:", tempStrings)
+	// encryptionKey, _ := hex.DecodeString(tempStrings[0]) // hex를 표현하는 string을 hex값으로 변환
+	encryptionKey := []byte(tempStrings[0]) // hex를 표현하는 string을 hex값으로 변환
 	publicKey, _ := hex.DecodeString(tempStrings[1])
 	hash, _ := hex.DecodeString(tempStrings[2])
 	signature, _ := hex.DecodeString(tempStrings[3])

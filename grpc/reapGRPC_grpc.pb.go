@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GreeterClient interface {
 	SayTransactionInfo(ctx context.Context, in *TransactionRequest, opts ...grpc.CallOption) (*TransactionReply, error)
-	GetTransactionInfo(ctx context.Context, in *Cid, opts ...grpc.CallOption) (*CidReply, error)
+	GetTransactionInfo(ctx context.Context, in *MetadataKey, opts ...grpc.CallOption) (*MetadataValue, error)
 }
 
 type greeterClient struct {
@@ -43,8 +43,8 @@ func (c *greeterClient) SayTransactionInfo(ctx context.Context, in *TransactionR
 	return out, nil
 }
 
-func (c *greeterClient) GetTransactionInfo(ctx context.Context, in *Cid, opts ...grpc.CallOption) (*CidReply, error) {
-	out := new(CidReply)
+func (c *greeterClient) GetTransactionInfo(ctx context.Context, in *MetadataKey, opts ...grpc.CallOption) (*MetadataValue, error) {
+	out := new(MetadataValue)
 	err := c.cc.Invoke(ctx, "/grpc.Greeter/GetTransactionInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (c *greeterClient) GetTransactionInfo(ctx context.Context, in *Cid, opts ..
 // for forward compatibility
 type GreeterServer interface {
 	SayTransactionInfo(context.Context, *TransactionRequest) (*TransactionReply, error)
-	GetTransactionInfo(context.Context, *Cid) (*CidReply, error)
+	GetTransactionInfo(context.Context, *MetadataKey) (*MetadataValue, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -68,7 +68,7 @@ type UnimplementedGreeterServer struct {
 func (UnimplementedGreeterServer) SayTransactionInfo(context.Context, *TransactionRequest) (*TransactionReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayTransactionInfo not implemented")
 }
-func (UnimplementedGreeterServer) GetTransactionInfo(context.Context, *Cid) (*CidReply, error) {
+func (UnimplementedGreeterServer) GetTransactionInfo(context.Context, *MetadataKey) (*MetadataValue, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionInfo not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
@@ -103,7 +103,7 @@ func _Greeter_SayTransactionInfo_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _Greeter_GetTransactionInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Cid)
+	in := new(MetadataKey)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func _Greeter_GetTransactionInfo_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/grpc.Greeter/GetTransactionInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).GetTransactionInfo(ctx, req.(*Cid))
+		return srv.(GreeterServer).GetTransactionInfo(ctx, req.(*MetadataKey))
 	}
 	return interceptor(ctx, in, info, handler)
 }

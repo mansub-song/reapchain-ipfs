@@ -36,16 +36,18 @@ const (
 )
 
 var (
-	addr = flag.String("addr", "147.46.245.72:50051", "the address to connect to")
+	addr = flag.String("addr", "147.46.240.242:50051", "the address to connect to")
 )
 
 type TxInfo struct {
-	BlockHash   string
-	BlockNumber uint32
-	TxHash      string
-	FromAddress string
-	ToAddress   string
-	Nonce       uint32
+	BlockHash      string
+	BlockNumber    uint32
+	TxHash         string
+	FromAddress    string
+	ToAddress      string
+	Nonce          uint32
+	Cid            string
+	BlockchainName string
 }
 
 func main() {
@@ -69,8 +71,8 @@ func main() {
 
 }
 func testGetTransactionInfo(ctx context.Context, client pb.GreeterClient) {
-	r, err := client.GetTransactionInfo(ctx, &pb.Cid{
-		Cid: "QmfJs6XRpf34TEK5TbTLFBDbeAbjgpYHHNdKJSrngkKfb7",
+	r, err := client.GetTransactionInfo(ctx, &pb.MetadataKey{
+		Cid: "QmcxuB3wB9fSPyimMLfqD9CxLSPQ3NgM7Es97aLrGT1nwe", BlockchainName: "ETH",
 	})
 	if err != nil {
 		log.Fatalf("could not GetTransactionInfo: %v", err)
@@ -87,12 +89,14 @@ func testGetTransactionInfo(ctx context.Context, client pb.GreeterClient) {
 
 func testSayTransactionInfo(ctx context.Context, client pb.GreeterClient) {
 	r, err := client.SayTransactionInfo(ctx, &pb.TransactionRequest{
-		BlockHash:   "0x9bb5a652cbbdb8f8b7e1cbbdb21264d7fa93983aada84d66272ab45233e740cf",
-		BlockNumber: 91541744,
-		TxHash:      "0xec166965eb8b5374f9ad52d1fa541de5e318d825242ed024d4a79d1b73e9fd59",
-		FromAddress: "0xb2936f054560409973fffaa7d5fdae9e5c8b628e",
-		ToAddress:   "0x3c817b136bad58d35c81bd1981b0151b7e07f21b",
-		Nonce:       486,
+		BlockHash:      "0x9bb5a652cbbdb8f8b7e1cbbdb21264d7fa93983aada84d66272ab45233e740cf",
+		BlockNumber:    91541744,
+		TxHash:         "0xec166965eb8b5374f9ad52d1fa541de5e318d825242ed024d4a79d1b73e9fd59",
+		FromAddress:    "0xb2936f054560409973fffaa7d5fdae9e5c8b628e",
+		ToAddress:      "0x3c817b136bad58d35c81bd1981b0151b7e07f21b",
+		Nonce:          486,
+		Cid:            "QmcxuB3wB9fSPyimMLfqD9CxLSPQ3NgM7Es97aLrGT1nwe",
+		BlockchainName: "ETH",
 	})
 	if err != nil {
 		log.Fatalf("could not SayTransactionInfo: %v", err)
